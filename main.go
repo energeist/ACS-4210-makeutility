@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -10,10 +9,14 @@ import (
 	"gorm.io/gorm"
 )
 
-// initialize GORM database globally
-var db *gorm.DB
-
 // Define structs
+
+// Handler struct
+type Handler struct {
+	db *gorm.DB
+}
+
+// Test struct
 type Test struct {
 	ID     string `json:"id"`
 	Stuff  string `json:"name"`
@@ -24,8 +27,7 @@ func main() {
 	fmt.Println("Hello, World!")
 
 	// initialize GORM and connect to SQLite database withs test.db file
-	var err error
-	db, err = gorm.Open(sqlite.Open("test.db"), &gorm.Config{})
+	db, err := gorm.Open(sqlite.Open("test.db"), &gorm.Config{})
 
 	if err != nil {
 		panic("failed to connect database")
@@ -34,30 +36,36 @@ func main() {
 	// Migrate the schema, create Test table with fields if it doesn't exist
 	db.AutoMigrate(&Test{})
 
+	handler := newHandler(db)
+
 	r := gin.New()
 
 	// Define routes
 
 	r.GET("/ping", pingHandler)
-	r.GET("/test", listTestHandler)
-	r.POST("/test", createTestHandler)
-	r.DELETE("/test/:id", deleteTestHandler)
+	r.GET("/test", handler.listTestHandler)
+	r.POST("/test", handler.createTestHandler)
+	r.DELETE("/test/:id", handler.deleteTestHandler)
 
 	r.Run() // listen and serve on port 8080
 }
 
-// Define route handler functions
+func newHandler(db *gorm.DB) *Handler {
+	return &Handler{db}
+}
 
+// Define a ping route for testing
 func pingHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"message": "pong",
 	})
 }
 
-func listTestHandler(c *gin.Context) {
+// Define CRUD handlers for Test struct as methods of Handler struct
+func (h *Handler) listTestHandler(c *gin.Context) {
 	var tests []Test
 
-	if result := db.Find(&tests); result.Error != nil {
+	if result := h.db.Find(&tests); result.Error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": result.Error.Error(),
 		})
@@ -66,7 +74,7 @@ func listTestHandler(c *gin.Context) {
 	c.JSON(200, tests)
 }
 
-func createTestHandler(c *gin.Context) {
+func (h *Handler) createTestHandler(c *gin.Context) {
 	var test Test
 
 	if err := c.ShouldBindJSON(&test); err != nil {
@@ -76,7 +84,7 @@ func createTestHandler(c *gin.Context) {
 		return
 	}
 
-	if result := db.Create(&test); result.Error != nil {
+	if result := h.db.Create(&test); result.Error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": result.Error.Error(),
 		})
@@ -86,10 +94,10 @@ func createTestHandler(c *gin.Context) {
 	c.JSON(http.StatusCreated, &test)
 }
 
-func deleteTestHandler(c *gin.Context) {
+func (h *Handler) deleteTestHandler(c *gin.Context) {
 	id := c.Param("id")
 
-	if result := db.Delete(&Test{}, id); result.Error != nil {
+	if result := h.db.Delete(&Test{}, id); result.Error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": result.Error.Error(),
 		})
