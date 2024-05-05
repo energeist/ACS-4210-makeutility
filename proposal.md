@@ -12,8 +12,9 @@ The audience for this utility is esports fans, particularly those who follow com
 
 | Package | Used For |
 | ------- | -------- |
-| GORM    | Database persistence |
+| github.com/joho/godotenv | .env file utility for private keys |
 | Gin     | Server & API routing |
+| GORM    | Database persistence |
 
 ## TASK BREAKDOWN
 
