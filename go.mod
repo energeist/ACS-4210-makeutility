@@ -1,4 +1,4 @@
-module simulation
+module github.com/energeist/tournament-calculator
 
 go 1.22.2
 

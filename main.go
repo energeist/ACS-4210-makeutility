@@ -19,7 +19,7 @@ type Handler struct {
 // Test struct
 type Test struct {
 	ID     string `json:"id"`
-	Stuff  string `json:"name"`
+	Name   string `json:"name"`
 	Number int    `json:"number"`
 }
 
