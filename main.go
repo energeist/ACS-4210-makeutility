@@ -7,6 +7,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
+
+	"github.com/energeist/tournament-calculator/models"
 )
 
 // Define structs
@@ -14,63 +16,6 @@ import (
 // Handler struct
 type Handler struct {
 	db *gorm.DB
-}
-
-// Test struct
-type Test struct {
-	ID     string `json:"id"`
-	Name   string `json:"name"`
-	Number int    `json:"number"`
-}
-
-// Plauer struct
-
-type Player struct {
-	ID        string `json:"id"`
-	Name      string `json:"name"`
-	Rating    int    `json:"rating"`
-	VsProtoss int    `json:"vs_protoss"`
-	VsTerran  int    `json:"vs_terran"`
-	VsZerg    int    `json:"vs_zerg"`
-}
-
-// Map struct
-type Map struct {
-	ID           string `json:"id"`
-	Name         string `json:"name"`
-	Height       int    `json:"height"`
-	Width        int    `json:"width"`
-	RushDistance int    `json:"rush_distance"`
-	Tvz          string `json:"tvz"`
-	ZvP          string `json:"zvp"`
-	PvT          string `json:"pvt"`
-}
-
-// Match struct
-type Match struct {
-	ID        string `json:"id"`
-	Player1ID string `json:"player1_id"`
-	Player2ID string `json:"player2_id"`
-	MapID     string `json:"map_id"`
-	Timestamp string `json:"timestamp"`
-}
-
-// Result struct
-type Result struct {
-	ID      string `json:"id"`
-	MatchID string `json:"match_id"`
-	Winner  string `json:"winner"`
-	Loser   string `json:"loser"`
-}
-
-type Bracket struct {
-	ID        string `json:"id"`
-	Players   []Player
-	Timestamp string `json:"timestamp"`
-}
-
-// TODO: ModelWeights struct to be incorporated later
-type ModelWeights struct {
 }
 
 // Main function
@@ -85,18 +30,27 @@ func main() {
 	}
 
 	// Migrate the schema, create Test table with fields if it doesn't exist
-	db.AutoMigrate(&Test{})
+	db.AutoMigrate(&models.Test{}, &models.Player{}, &models.GameMap{})
 
 	handler := newHandler(db)
 
 	r := gin.New()
 
-	// Define routes
+	// Define test routes
 
 	r.GET("/ping", pingHandler)
 	r.GET("/test", handler.listTestHandler)
 	r.POST("/test", handler.createTestHandler)
 	r.DELETE("/test/:id", handler.deleteTestHandler)
+
+	// Define player routes
+	r.GET("/player", handler.listPlayerHandler)
+	r.GET("/player/:id", handler.listPlayerHandler)
+	r.POST("/player", handler.createPlayerHandler)
+
+	// Define map routes
+	r.GET("/map", handler.listMapHandler)
+	r.POST("/map", handler.createMapHandler)
 
 	r.Run() // listen and serve on port 8080
 }
@@ -114,7 +68,7 @@ func pingHandler(c *gin.Context) {
 
 // Define CRUD handlers for Test struct as methods of Handler struct
 func (h *Handler) listTestHandler(c *gin.Context) {
-	var tests []Test
+	var tests []models.Test
 
 	if result := h.db.Find(&tests); result.Error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -126,7 +80,7 @@ func (h *Handler) listTestHandler(c *gin.Context) {
 }
 
 func (h *Handler) createTestHandler(c *gin.Context) {
-	var test Test
+	var test models.Test
 
 	if err := c.ShouldBindJSON(&test); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -148,7 +102,7 @@ func (h *Handler) createTestHandler(c *gin.Context) {
 func (h *Handler) deleteTestHandler(c *gin.Context) {
 	id := c.Param("id")
 
-	if result := h.db.Delete(&Test{}, id); result.Error != nil {
+	if result := h.db.Delete(&models.Test{}, id); result.Error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": result.Error.Error(),
 		})
@@ -160,4 +114,86 @@ func (h *Handler) deleteTestHandler(c *gin.Context) {
 	// })
 
 	c.Status(http.StatusNoContent)
+}
+
+// Define CRUD handlers for Player struct as methods of Handler struct
+func (h *Handler) listPlayerHandler(c *gin.Context) {
+	if id := c.Param("id"); id != "" {
+		var player models.Player
+
+		if result := h.db.First(&player, id); result.Error != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error": result.Error.Error(),
+			})
+			return
+		}
+
+		c.JSON(200, player)
+		return
+	} else {
+		var players []models.Player
+
+		if result := h.db.Find(&players); result.Error != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error": result.Error.Error(),
+			})
+			return
+		}
+
+		c.JSON(200, players)
+		return
+	}
+}
+
+func (h *Handler) createPlayerHandler(c *gin.Context) {
+	var player models.Player
+
+	if err := c.ShouldBindJSON(&player); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	if result := h.db.Create(&player); result.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": result.Error.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusCreated, &player)
+}
+
+// Define CRUD handlers for Map struct as methods of Handler struct
+func (h *Handler) listMapHandler(c *gin.Context) {
+	var gameMaps []models.GameMap
+
+	if result := h.db.Find(&gameMaps); result.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": result.Error.Error(),
+		})
+		return
+	}
+	c.JSON(200, gameMaps)
+}
+
+func (h *Handler) createMapHandler(c *gin.Context) {
+	var mapObj models.GameMap
+
+	if err := c.ShouldBindJSON(&mapObj); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	if result := h.db.Create(&mapObj); result.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": result.Error.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusCreated, &mapObj)
 }
