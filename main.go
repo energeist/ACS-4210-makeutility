@@ -8,12 +8,11 @@ import (
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 
+	"github.com/energeist/tournament-calculator/helpers"
 	"github.com/energeist/tournament-calculator/models"
 )
 
-// Define structs
-
-// Handler struct
+// Handler struct for GORM database
 type Handler struct {
 	db *gorm.DB
 }
@@ -21,6 +20,8 @@ type Handler struct {
 // Main function
 func main() {
 	fmt.Println("Hello, World!")
+
+	ginPort := helpers.LoadFromDotEnv("GIN_PORT")
 
 	// initialize GORM and connect to SQLite database withs test.db file
 	db, err := gorm.Open(sqlite.Open("test.db"), &gorm.Config{})
@@ -52,7 +53,7 @@ func main() {
 	r.GET("/map", handler.listMapHandler)
 	r.POST("/map", handler.createMapHandler)
 
-	r.Run() // listen and serve on port 8080
+	r.Run(":" + ginPort) // listen and serve on port 8080
 }
 
 func newHandler(db *gorm.DB) *Handler {

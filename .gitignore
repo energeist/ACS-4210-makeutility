@@ -11,6 +11,13 @@
 *.dll
 *.so
 *.dylib
+/tournament-calculator
+
+# SQLite local DB file
+*.db
+
+# ENV file
+.env
 
 # Test binary, built with `go test -c`
 *.test
