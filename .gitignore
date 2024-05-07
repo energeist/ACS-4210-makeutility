@@ -12,6 +12,8 @@
 *.so
 *.dylib
 /tournament-calculator
+/client/client
+/server/server
 
 # SQLite local DB file
 *.db
