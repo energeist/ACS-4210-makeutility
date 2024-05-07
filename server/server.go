@@ -54,7 +54,7 @@ func main() {
 	r.GET("/map", handler.listMapHandler)
 	r.POST("/map", handler.createMapHandler)
 
-	r.Run(":" + ginPort) // listen and serve on port 8080
+	r.Run(":" + ginPort) // listen and serve on port specified in .env file
 }
 
 func newHandler(db *gorm.DB) *Handler {
