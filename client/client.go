@@ -38,5 +38,5 @@ func main() {
 	// fmt.Println("Response: ", resp)
 
 	// Seed the db with maps
-	helpers.GenerateDBSeed()
+	// helpers.GenerateDBSeed()
 }

@@ -34,12 +34,30 @@ func main() {
 	// Migrate the schema, create Test table with fields if it doesn't exist
 	db.AutoMigrate(&models.Test{}, &models.Player{}, &models.GameMap{})
 
+	// Seed database with maps if required
+	var count int64
+	db.Model(&models.GameMap{}).Count(&count)
+	if count < 9 {
+		helpers.GenerateDBSeed(db)
+	} else {
+		fmt.Println("Maps already seeded")
+	}
+
 	handler := newHandler(db)
 
 	r := gin.New()
 
-	// Define test routes
+	setupRoutes(r, handler)
 
+	r.Run(":" + ginPort) // listen and serve on port specified in .env file
+}
+
+func newHandler(db *gorm.DB) *Handler {
+	return &Handler{db}
+}
+
+func setupRoutes(r *gin.Engine, handler *Handler) {
+	// Define test routes
 	r.GET("/ping", pingHandler)
 	r.GET("/test", handler.listTestHandler)
 	r.POST("/test", handler.createTestHandler)
@@ -51,14 +69,8 @@ func main() {
 	r.POST("/player", handler.createPlayerHandler)
 
 	// Define map routes
-	r.GET("/map", handler.listMapHandler)
-	r.POST("/map", handler.createMapHandler)
-
-	r.Run(":" + ginPort) // listen and serve on port specified in .env file
-}
-
-func newHandler(db *gorm.DB) *Handler {
-	return &Handler{db}
+	r.GET("/gameMap", handler.listMapHandler)
+	r.POST("/gameMap", handler.createMapHandler)
 }
 
 // Define a ping route for testing

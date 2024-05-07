@@ -5,12 +5,14 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"os"
 	"time"
 
 	"github.com/energeist/tournament-calculator/models"
 	"github.com/joho/godotenv"
+	"gorm.io/gorm"
 )
 
 // Load environment variables from .env file
@@ -30,13 +32,19 @@ func ServerURL(endpoint, serverPort string) string {
 	return "http://localhost:" + serverPort + "/" + endpoint
 }
 
-func GetRequest(url string) (*http.Response, error) {
+func GetRequest(url string) ([]byte, error) {
 	resp, err := http.Get(url)
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 
-	return resp, nil
+	body, err := io.ReadAll(resp.Body) // Read the response body
+	if err != nil {
+		return nil, err
+	}
+
+	return body, nil
 }
 
 func PostRequest(url string, data interface{}) (*http.Response, error) {
@@ -53,7 +61,9 @@ func PostRequest(url string, data interface{}) (*http.Response, error) {
 	return resp, nil
 }
 
-func GenerateDBSeed() {
+func GenerateDBSeed(db *gorm.DB) {
+	fmt.Println("Seeding DB with maps")
+
 	alcyone := models.GameMap{
 		Name:         "Alcyone",
 		Height:       144,
@@ -165,13 +175,8 @@ func GenerateDBSeed() {
 	gameMaps := []models.GameMap{alcyone, amphion, crimsonCourt, dynasty, ghostRiver, goldenaura, oceanborn, postYouth, siteDelta}
 
 	for _, gameMap := range gameMaps {
-		resp, err := PostRequest(ServerURL("map", "8080"), gameMap)
-
-		if err != nil {
-			fmt.Println("Error creating map: ", err)
+		if result := db.Create(&gameMap); result.Error != nil {
+			fmt.Println("Error creating map: ", result.Error)
 		}
-
-		fmt.Println("Response: ", resp)
 	}
-
 }
