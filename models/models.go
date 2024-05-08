@@ -36,10 +36,9 @@ type GameMap struct {
 
 // Match struct
 type Match struct {
-	ID        uint      `json:"id" gorm:"primary_key"`
+	ID        uint      `json:"id" gorm:"primary_key;auto_increment"`
 	Player1   Player    `json:"player1_id" gorm:"type:uint"`
 	Player2   Player    `json:"player2_id" gorm:"type:uint"`
-	GameMap   GameMap   `json:"map_id" gorm:"type:uint"`
 	CreatedAt time.Time `json:"created_at" gorm:"type:datetime"`
 	UpdatedAt time.Time `json:"updated_at" gorm:"type:datetime"`
 }

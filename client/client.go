@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"math/rand"
 	"strconv"
 
 	"github.com/energeist/tournament-calculator/helpers"
@@ -20,6 +21,68 @@ func main() {
 	// Get top X players from Aligulac API
 	topXPlayers := 50
 
+	seedTopPlayers(serverPort, APIKey, topXPlayers)
+
+	// Get all players from db
+	playersData, err := helpers.GetRequest(helpers.ServerURL("player", serverPort))
+	if err != nil {
+		fmt.Println("Error: ", err)
+		return
+	}
+
+	var players []models.Player
+	if err := json.Unmarshal(playersData, &players); err != nil {
+		fmt.Println("Error: ", err)
+		return
+	}
+
+	// Get all maps from db
+	mapsData, err := helpers.GetRequest(helpers.ServerURL("map", serverPort))
+	if err != nil {
+		fmt.Println("Error: ", err)
+		return
+	}
+
+	var maps []models.GameMap
+	if err := json.Unmarshal(mapsData, &maps); err != nil {
+		fmt.Println("Error: ", err)
+		return
+	}
+
+	// select 2 random players from the list
+	player1Index := rand.Intn(len(players) - 1)
+
+	// ensure that two unique players are selected
+	var player2Index int
+	for {
+		player2Index = rand.Intn(len(players) - 1)
+		if player2Index != player1Index {
+			break
+		}
+	}
+
+	// create a Match between the two players and store in db
+	match := models.Match{
+		Player1: players[player1Index],
+		Player2: players[player2Index],
+	}
+
+	_, err = helpers.PostRequest(helpers.ServerURL("match", serverPort), match)
+	if err != nil {
+		fmt.Println("Error storing match:", err)
+	}
+	// perform calculation
+	// lots of iterations, randomly assign map from the pool to each iteration
+	// calculation will yield a win probability for each player
+
+	// store Result in db
+}
+
+type APIResponsePlayers struct {
+	Objects []models.Player `json:"objects"`
+}
+
+func seedTopPlayers(serverPort, APIKey string, topXPlayers int) {
 	existingPlayersData, err := helpers.GetRequest(helpers.ServerURL("player", serverPort))
 	if err != nil {
 		fmt.Println("Error: ", err)
@@ -60,8 +123,4 @@ func main() {
 	} else {
 		fmt.Println("Top " + strconv.Itoa(topXPlayers) + " players already seeded")
 	}
-}
-
-type APIResponsePlayers struct {
-	Objects []models.Player `json:"objects"`
 }
