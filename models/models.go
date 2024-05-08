@@ -7,6 +7,7 @@ import "time"
 type Player struct {
 	ID        uint      `json:"id" gorm:"primaryKey"`
 	Tag       string    `json:"tag" gorm:"type:varchar(15)"`
+	Race      string    `json:"race" gorm:"type:varchar(1)"`
 	Rating    Rating    `json:"current_rating" gorm:"embedded;embeddedPrefix:rating_"`
 	CreatedAt time.Time `json:"created_at" gorm:"type:datetime"`
 	UpdatedAt time.Time `json:"updated_at" gorm:"type:datetime"`
@@ -47,16 +48,19 @@ type Match struct {
 
 // Result struct
 type Result struct {
-	ID        uint      `json:"id" gorm:"primary_key"`
-	Match     Match     `json:"match_id" gorm:"type:int"`
+	ID        uint      `json:"id" gorm:"primaryKey;autoIncrement"`
+	MatchID   uint      `json:"match_id"`
+	WinnerID  uint      `json:"winner_id"`
 	Winner    Player    `json:"winner" gorm:"foreignKey:WinnerID"`
+	LoserID   uint      `json:"loser_id"`
 	Loser     Player    `json:"loser" gorm:"foreignKey:LoserID"`
 	CreatedAt time.Time `json:"created_at" gorm:"type:datetime"`
 	UpdatedAt time.Time `json:"updated_at" gorm:"type:datetime"`
 }
 
+// TODO: Expand functionality to calculate whole BO16 bracket, beyond single match
 type Bracket struct {
-	ID        uint      `json:"id" gorm:"primary_key"`
+	ID        uint      `json:"id" gorm:"primaryKey;autoIncrement"`
 	Players   []Player  `json:"players" gorm:"type:json"`
 	Timestamp string    `json:"timestamp" gorm:"type:datetime"`
 	CreatedAt time.Time `json:"created_at" gorm:"type:datetime"`

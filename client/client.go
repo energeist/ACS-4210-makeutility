@@ -3,7 +3,9 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"math/rand"
+	"net/http"
 	"strconv"
 
 	"github.com/energeist/tournament-calculator/helpers"
@@ -13,8 +15,6 @@ import (
 const rating_factor = 1354
 
 func main() {
-	fmt.Println("Hello, World!")
-
 	serverPort := helpers.LoadFromDotEnv("GIN_PORT")
 	APIKey := helpers.LoadFromDotEnv("ALIGULAC_API_KEY")
 
@@ -62,27 +62,57 @@ func main() {
 	}
 
 	// create a Match between the two players and store in db
-	fmt.Println("\nPlayer1:")
-	fmt.Println(players[player1Index])
-	fmt.Println("\nPlayer2:")
-	fmt.Println(players[player2Index])
-
 	match := models.Match{
 		Player1ID: players[player1Index].ID,
 		Player2ID: players[player2Index].ID,
 	}
 
-	_, err = helpers.PostRequest(helpers.ServerURL("match", serverPort), match)
+	var lastMatch *http.Response
+	lastMatch, err = helpers.PostRequest(helpers.ServerURL("match", serverPort), match)
 	if err != nil {
 		fmt.Println("Error storing match:", err)
 	}
 
-	fmt.Printf("Match between %s and %s stored in db", players[player1Index].Tag, players[player2Index].Tag)
+	bodyBytes, _ := io.ReadAll(lastMatch.Body)
+
+	var matchResponse models.Match
+	err = json.Unmarshal(bodyBytes, &matchResponse)
+	if err != nil {
+		fmt.Println("Error unmarshalling matchResponse:", err)
+	}
+
+	fmt.Printf("Match between %s and %s stored in db\n", players[player1Index].Tag, players[player2Index].Tag)
+
 	// perform calculation
 	// lots of iterations, randomly assign map from the pool to each iteration
 	// calculation will yield a win probability for each player
 
+	// result = calculateOutcome(players[player1Index], players[player2Index], maps)
+
+	// query db for the last match entered
+
+	// coinflip to get a random winner for now
+	winner := coinflip(players[player1Index], players[player2Index])
+	var loser models.Player
+	if winner == players[player1Index] {
+		loser = players[player2Index]
+	} else {
+		loser = players[player1Index]
+	}
+
 	// store Result in db
+	result := models.Result{
+		MatchID:  matchResponse.ID,
+		WinnerID: winner.ID,
+		LoserID:  loser.ID,
+	}
+
+	_, err = helpers.PostRequest(helpers.ServerURL("result", serverPort), result)
+	if err != nil {
+		fmt.Println("Error storing result:", err)
+	}
+
+	fmt.Printf("\nResult stored in db: %s wins\n", winner.Tag)
 }
 
 type APIResponsePlayers struct {
@@ -117,9 +147,6 @@ func seedTopPlayers(serverPort, APIKey string, topXPlayers int) {
 			return
 		}
 
-		fmt.Println("APIResponsePlayers.Objects[0]: ")
-		fmt.Println(APIResponsePlayers.Objects[0])
-
 		// Store each player in the database
 		for _, player := range APIResponsePlayers.Objects {
 			_, err := helpers.PostRequest(helpers.ServerURL("player", serverPort), player)
@@ -130,4 +157,21 @@ func seedTopPlayers(serverPort, APIKey string, topXPlayers int) {
 	} else {
 		fmt.Println("Top " + strconv.Itoa(topXPlayers) + " players already seeded")
 	}
+}
+
+// func calculateOutcome(player1, player2 models.Player, maps []models.GameMap) models.Result {
+// initialize a map of probabilities that each player wins
+// calculate win probability for player1
+// win probability for player2 is 1 - win probability for player1
+// store the result in the db
+// return the result
+// }
+
+func coinflip(player1, player2 models.Player) models.Player {
+	// randomly select a player to win
+
+	if rand.Float64() < 0.5 {
+		return player1
+	}
+	return player2
 }

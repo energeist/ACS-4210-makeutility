@@ -29,7 +29,7 @@ func main() {
 	}
 
 	// Migrate the schema, create tables if they do not exist
-	database.AutoMigrate(&models.Player{}, &models.GameMap{}, &models.Match{})
+	database.AutoMigrate(&models.Player{}, &models.GameMap{}, &models.Match{}, &models.Result{})
 
 	// Seed database with maps if required
 	var count int64
