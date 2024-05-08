@@ -48,14 +48,15 @@ type Match struct {
 
 // Result struct
 type Result struct {
-	ID        uint      `json:"id" gorm:"primaryKey;autoIncrement"`
-	MatchID   uint      `json:"match_id"`
-	WinnerID  uint      `json:"winner_id"`
-	Winner    Player    `json:"winner" gorm:"foreignKey:WinnerID"`
-	LoserID   uint      `json:"loser_id"`
-	Loser     Player    `json:"loser" gorm:"foreignKey:LoserID"`
-	CreatedAt time.Time `json:"created_at" gorm:"type:datetime"`
-	UpdatedAt time.Time `json:"updated_at" gorm:"type:datetime"`
+	ID               uint      `json:"id" gorm:"primaryKey;autoIncrement"`
+	MatchID          uint      `json:"match_id"`
+	WinnerID         uint      `json:"winner_id"`
+	Winner           Player    `json:"winner" gorm:"foreignKey:WinnerID"`
+	WinnerPercentage float32   `json:"winner_percentage"`
+	LoserID          uint      `json:"loser_id"`
+	Loser            Player    `json:"loser" gorm:"foreignKey:LoserID"`
+	CreatedAt        time.Time `json:"created_at" gorm:"type:datetime"`
+	UpdatedAt        time.Time `json:"updated_at" gorm:"type:datetime"`
 }
 
 // TODO: Expand functionality to calculate whole BO16 bracket, beyond single match
