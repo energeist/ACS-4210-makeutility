@@ -6,19 +6,24 @@ import "time"
 
 type Player struct {
 	ID        uint      `json:"id" gorm:"primary_key"`
-	Name      string    `json:"name" gorm:"type:varchar(100)"`
-	Rating    uint16    `json:"rating" gorm:"type:uint"`
-	VsProtoss uint16    `json:"vs_protoss" gorm:"type:uint"`
-	VsTerran  uint16    `json:"vs_terran" gorm:"type:uint"`
-	VsZerg    uint16    `json:"vs_zerg" gorm:"type:uint"`
+	Name      string    `json:"tag" gorm:"type:varchar(15)"`
+	Rating    Rating    `json:"current_rating"`
 	CreatedAt time.Time `json:"created_at" gorm:"type:datetime"`
 	UpdatedAt time.Time `json:"updated_at" gorm:"type:datetime"`
+}
+
+// Rating struct to capture nested JSON data
+type Rating struct {
+	Rating    float32 `json:"rating" gorm:"type:float"`
+	VsProtoss float32 `json:"tot_vp" gorm:"type:float"`
+	VsTerran  float32 `json:"tot_vt" gorm:"type:float"`
+	VsZerg    float32 `json:"tot_vz" gorm:"type:float"`
 }
 
 // Map struct
 type GameMap struct {
 	ID           uint      `json:"id" gorm:"primary_key"`
-	Name         string    `json:"name" gorm:"type:varchar(100)"`
+	Name         string    `json:"name" gorm:"type:varchar(30)"`
 	Height       uint8     `json:"height" gorm:"type:uint"`
 	Width        uint8     `json:"width" gorm:"type:uint"`
 	RushDistance uint8     `json:"rush_distance" gorm:"type:uint"`
@@ -31,7 +36,7 @@ type GameMap struct {
 
 // Match struct
 type Match struct {
-	ID        uint      `json:"id" gorm:"primaryKey"`
+	ID        uint      `json:"id" gorm:"primary_key"`
 	Player1   Player    `json:"player1_id" gorm:"type:uint"`
 	Player2   Player    `json:"player2_id" gorm:"type:uint"`
 	GameMap   GameMap   `json:"map_id" gorm:"type:uint"`
