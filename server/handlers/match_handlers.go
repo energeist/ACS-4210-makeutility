@@ -17,28 +17,22 @@ type MatchHandler struct {
 func (h *MatchHandler) ListMatches(c *gin.Context) {
 	if id := c.Param("id"); id != "" {
 		var match models.Match
-
-		if result := h.Handler.DB.First(&match, id); result.Error != nil {
+		if result := h.Handler.DB.Preload("Player1").Preload("Player2").First(&match, id); result.Error != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{
 				"error": result.Error.Error(),
 			})
 			return
 		}
-
 		c.JSON(200, match)
-		return
 	} else {
 		var matches []models.Match
-
-		if result := h.Handler.DB.Find(&matches); result.Error != nil {
+		if result := h.Handler.DB.Preload("Player1").Preload("Player2").Find(&matches); result.Error != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{
 				"error": result.Error.Error(),
 			})
 			return
 		}
-
 		c.JSON(200, matches)
-		return
 	}
 }
 
@@ -50,7 +44,12 @@ func (h *MatchHandler) CreateMatches(c *gin.Context) {
 		return
 	}
 
-	result := h.Handler.DB.Where(models.Match{ID: match.ID}).FirstOrCreate(&match)
+	if match.Player1ID == 0 || match.Player2ID == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid player IDs"})
+		return
+	}
+
+	result := h.Handler.DB.Create(&match) // Using Create directly
 
 	if result.Error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})

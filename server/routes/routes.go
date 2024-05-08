@@ -14,13 +14,16 @@ func SetupRoutes(r *gin.Engine, handler *db.Handler) {
 
 	// Player routes
 	r.GET("/player", playerHandler.ListPlayers)
+	r.GET("/player/:id", playerHandler.ListPlayers)
 	r.POST("/player", playerHandler.CreatePlayers)
 
 	// Map routes
 	r.GET("/gameMap", mapHandler.ListMaps)
+	r.GET("/gameMap/:id", mapHandler.ListMaps)
 	r.POST("/gameMap", mapHandler.CreateMaps)
 
 	// Match routes
 	r.GET("/match", matchHandler.ListMatches)
+	r.GET("/match/:id", matchHandler.ListMatches)
 	r.POST("/match", matchHandler.CreateMatches)
 }

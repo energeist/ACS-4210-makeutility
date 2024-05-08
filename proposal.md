@@ -16,7 +16,7 @@ The audience for this utility is esports fans, particularly those who follow com
 | Gin     | Server & API routing |
 | GORM    | Database persistence |
 
-## TASK BREAKDOWN
+## TASK BREAKDOWN FOR V1.0
 
 | Task Description | Hours | Done By |
 | ---------------- | ----- | ------- |
@@ -32,11 +32,12 @@ The audience for this utility is esports fans, particularly those who follow com
 - Expand functionality from single 1v1 match to tournament bracket
 - - Expand from single game matches to Best-of-N, as would be typical of a real tournament
 - Allow user to select players from input instead of random choice from top X
-- Concurrent API calls to speed up initialization process
+- Allow selection of map pool instead of using GSL 2024 Season 2 map pool for all calculations
+- Concurrent API calls to Aligulac to speed up initialization process
 - Concurrent Match outcome calculation
 - Parallel iteration to make use of threading
 - Improvement of calculation model
 - Further abstraction of code modules for better separation of concerns
 - - Headless client should be as light weight as possible, and could also be supplemented with an actual front end
 - - Calculation engine should live outside of the server as its own microservice / job platform
-
+- Implement memcached to prevent overquerying of API & overloading of DB writes

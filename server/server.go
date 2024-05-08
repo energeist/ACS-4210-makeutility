@@ -14,11 +14,6 @@ import (
 	"github.com/energeist/tournament-calculator/server/routes"
 )
 
-// Handler struct for GORM database
-// type Handler struct {
-// 	db *gorm.DB
-// }
-
 // Main function
 func main() {
 	fmt.Println("Hello, World!")
@@ -34,7 +29,7 @@ func main() {
 	}
 
 	// Migrate the schema, create tables if they do not exist
-	database.AutoMigrate(&models.Player{}, &models.GameMap{})
+	database.AutoMigrate(&models.Player{}, &models.GameMap{}, &models.Match{})
 
 	// Seed database with maps if required
 	var count int64
@@ -53,30 +48,9 @@ func main() {
 	r.Run(":" + ginPort) // listen and serve on port specified in .env file
 }
 
-// func newHandler(db *gorm.DB) *Handler {
-// 	return &Handler{db}
-// }
-
 // Define a ping route for testing
 func pingHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"message": "pong",
 	})
 }
-
-// func (h *Handler) deleteTestHandler(c *gin.Context) {
-// 	id := c.Param("id")
-
-// 	if result := h.db.Delete(&models.Test{}, id); result.Error != nil {
-// 		c.JSON(http.StatusInternalServerError, gin.H{
-// 			"error": result.Error.Error(),
-// 		})
-// 		return
-// 	}
-
-// 	// c.JSON(http.StatusOK, gin.H{
-// 	// 	"message": "record deleted",
-// 	// })
-
-// 	c.Status(http.StatusNoContent)
-// }

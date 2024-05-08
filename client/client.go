@@ -26,26 +26,26 @@ func main() {
 	// Get all players from db
 	playersData, err := helpers.GetRequest(helpers.ServerURL("player", serverPort))
 	if err != nil {
-		fmt.Println("Error: ", err)
+		fmt.Println("Error in playersData request: ", err)
 		return
 	}
 
 	var players []models.Player
 	if err := json.Unmarshal(playersData, &players); err != nil {
-		fmt.Println("Error: ", err)
+		fmt.Println("Error in unmarshalling players data: ", err)
 		return
 	}
 
 	// Get all maps from db
-	mapsData, err := helpers.GetRequest(helpers.ServerURL("map", serverPort))
+	mapsData, err := helpers.GetRequest(helpers.ServerURL("gameMap", serverPort))
 	if err != nil {
-		fmt.Println("Error: ", err)
+		fmt.Println("Error in mapsData get request: ", err)
 		return
 	}
 
 	var maps []models.GameMap
 	if err := json.Unmarshal(mapsData, &maps); err != nil {
-		fmt.Println("Error: ", err)
+		fmt.Println("Error in unmarshalling maps data: ", err)
 		return
 	}
 
@@ -62,15 +62,22 @@ func main() {
 	}
 
 	// create a Match between the two players and store in db
+	fmt.Println("\nPlayer1:")
+	fmt.Println(players[player1Index])
+	fmt.Println("\nPlayer2:")
+	fmt.Println(players[player2Index])
+
 	match := models.Match{
-		Player1: players[player1Index],
-		Player2: players[player2Index],
+		Player1ID: players[player1Index].ID,
+		Player2ID: players[player2Index].ID,
 	}
 
 	_, err = helpers.PostRequest(helpers.ServerURL("match", serverPort), match)
 	if err != nil {
 		fmt.Println("Error storing match:", err)
 	}
+
+	fmt.Printf("Match between %s and %s stored in db", players[player1Index].Tag, players[player2Index].Tag)
 	// perform calculation
 	// lots of iterations, randomly assign map from the pool to each iteration
 	// calculation will yield a win probability for each player

@@ -5,7 +5,7 @@ import "time"
 // Player struct
 
 type Player struct {
-	ID        uint      `json:"id" gorm:"primary_key"`
+	ID        uint      `json:"id" gorm:"primaryKey"`
 	Tag       string    `json:"tag" gorm:"type:varchar(15)"`
 	Rating    Rating    `json:"current_rating" gorm:"embedded;embeddedPrefix:rating_"`
 	CreatedAt time.Time `json:"created_at" gorm:"type:datetime"`
@@ -22,8 +22,8 @@ type Rating struct {
 
 // Map struct
 type GameMap struct {
-	ID           uint      `json:"id" gorm:"primary_key"`
-	Name         string    `json:"name" gorm:"type:varchar(30)"`
+	ID           uint      `json:"id" gorm:"primaryKey;autoIncrement"`
+	Name         string    `json:"name" gorm:"type:varchar(100)"`
 	Height       uint8     `json:"height" gorm:"type:uint"`
 	Width        uint8     `json:"width" gorm:"type:uint"`
 	RushDistance uint8     `json:"rush_distance" gorm:"type:uint"`
@@ -36,11 +36,13 @@ type GameMap struct {
 
 // Match struct
 type Match struct {
-	ID        uint      `json:"id" gorm:"primary_key;auto_increment"`
-	Player1   Player    `json:"player1_id" gorm:"type:uint"`
-	Player2   Player    `json:"player2_id" gorm:"type:uint"`
-	CreatedAt time.Time `json:"created_at" gorm:"type:datetime"`
-	UpdatedAt time.Time `json:"updated_at" gorm:"type:datetime"`
+	ID        uint      `json:"id" gorm:"primaryKey;autoIncrement"`
+	Player1ID uint      `json:"player1_id"`
+	Player1   Player    `json:"player1" gorm:"foreignKey:Player1ID"`
+	Player2ID uint      `json:"player2_id"`
+	Player2   Player    `json:"player2" gorm:"foreignKey:Player2ID"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 // Result struct
