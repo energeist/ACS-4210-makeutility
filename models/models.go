@@ -2,13 +2,6 @@ package models
 
 import "time"
 
-// Test struct
-type Test struct {
-	ID     int    `json:"id" gorm:"primary_key"`
-	Name   string `json:"name" gorm:"type:varchar(100)"`
-	Number int    `json:"number" gorm:"type:int"`
-}
-
 // Player struct
 
 type Player struct {

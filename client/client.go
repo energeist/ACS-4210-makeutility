@@ -6,6 +6,8 @@ import (
 	"github.com/energeist/tournament-calculator/helpers"
 )
 
+const rating_factor = 1354
+
 func main() {
 	fmt.Println("Hello, World!")
 
@@ -13,30 +15,13 @@ func main() {
 	APIKey := helpers.LoadFromDotEnv("ALIGULAC_API_KEY")
 
 	fmt.Println("Server Port: ", serverPort)
-	fmt.Println("API Key: ", APIKey)
 
-	// Create a new player
-	// player := models.Player{
-	// 	Name:      "Test Player",
-	// 	Rating:    1000,
-	// 	VsProtoss: 50,
-	// 	VsTerran:  50,
-	// 	VsZerg:    50,
-	// }
+	// Get top 50 players from Aligulac API
+	url := "http://aligulac.com/api/v1/player/?current_rating__isnull=false&order_by=-current_rating__rating&limit=50&apikey=" + APIKey
+	body, err := helpers.GetRequest(url)
+	if err != nil {
+		fmt.Println("Error: ", err)
+	}
 
-	// playerJSON, err := json.Marshal(player)
-	// if err != nil {
-	// 	fmt.Println("Error marshaling player to JSON: ", err)
-	// 	return
-	// }
-
-	// resp, err := http.Post("http://localhost:"+serverPort+"/player", "application/json", bytes.NewBuffer(playerJSON))
-	// if err != nil {
-	// 	fmt.Println("Error creating player: ", err)
-	// }
-
-	// fmt.Println("Response: ", resp)
-
-	// Seed the db with maps
-	// helpers.GenerateDBSeed()
+	fmt.Println(string(body))
 }

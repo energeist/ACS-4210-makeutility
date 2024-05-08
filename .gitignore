@@ -11,7 +11,6 @@
 *.dll
 *.so
 *.dylib
-/tournament-calculator
 /client/client
 /server/server
 
