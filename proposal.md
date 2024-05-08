@@ -2,7 +2,7 @@
 
 ## GOALS
 
-The goal of this project is to create a utility that can quickly calculate the potential outcomes of a Starcraft II fantasy tournament.  This utility will use data from [publicly available APIs](http://aligulac.com) and information about the current [professional tournament environment](https://liquipedia.net/starcraft2/Main_Page) to make data-informed predictions.
+The goal of this project is to create a utility that can quickly calculate the potential outcomes of a Starcraft II fantasy match between two pro players with data available on record.  This utility will use data from [publicly available APIs](http://aligulac.com) and information about the current [professional tournament environment](https://liquipedia.net/starcraft2/Main_Page) to make data-informed predictions.
 
 ## AUDIENCE
 
@@ -25,5 +25,18 @@ The audience for this utility is esports fans, particularly those who follow com
 | Plan basic implementation | 6 | May 1 | 
 | Assemble Seed Data | 3 | May 3 |
 | Build basic implementation | 12 | May 6 |
-| Add calculation logic | 6 | May 8 |
-| Add customizable model weights for tuning | 6 | May 10 |
+| Add basic calculation logic for single match for MVP | 6 | May 8 |
+
+## FUTURE ADDITIONS
+
+- Expand functionality from single 1v1 match to tournament bracket
+- - Expand from single game matches to Best-of-N, as would be typical of a real tournament
+- Allow user to select players from input instead of random choice from top X
+- Concurrent API calls to speed up initialization process
+- Concurrent Match outcome calculation
+- Parallel iteration to make use of threading
+- Improvement of calculation model
+- Further abstraction of code modules for better separation of concerns
+- - Headless client should be as light weight as possible, and could also be supplemented with an actual front end
+- - Calculation engine should live outside of the server as its own microservice / job platform
+
