@@ -6,7 +6,7 @@ import "time"
 
 type Player struct {
 	ID        uint      `json:"id" gorm:"primary_key"`
-	Name      string    `json:"tag" gorm:"type:varchar(15)"`
+	Tag       string    `json:"tag" gorm:"type:varchar(15)"`
 	Rating    Rating    `json:"current_rating" gorm:"embedded;embeddedPrefix:rating_"`
 	CreatedAt time.Time `json:"created_at" gorm:"type:datetime"`
 	UpdatedAt time.Time `json:"updated_at" gorm:"type:datetime"`

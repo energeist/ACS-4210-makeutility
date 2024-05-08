@@ -46,16 +46,14 @@ func (h *PlayerHandler) CreatePlayers(c *gin.Context) {
 	var player models.Player
 
 	if err := c.ShouldBindJSON(&player); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": err.Error(),
-		})
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	if result := h.Handler.DB.Create(&player); result.Error != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": result.Error.Error(),
-		})
+	result := h.Handler.DB.Where(models.Player{Tag: player.Tag}).FirstOrCreate(&player)
+
+	if result.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
 		return
 	}
 
