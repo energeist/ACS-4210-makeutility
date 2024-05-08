@@ -19,7 +19,7 @@ func main() {
 	fmt.Println("Server Port: ", serverPort)
 
 	// Get top 50 players from Aligulac API
-	url := "http://aligulac.com/api/v1/player/?current_rating__isnull=false&order_by=-current_rating__rating&limit=50&apikey=" + APIKey
+	url := "http://aligulac.com/api/v1/player/?current_rating__isnull=false&order_by=-current_rating__rating&limit=3&apikey=" + APIKey
 	multiplePlayersData, err := helpers.GetRequest(url)
 	if err != nil {
 		fmt.Println("Error: ", err)
@@ -37,6 +37,21 @@ func main() {
 
 	fmt.Println("Parsed API response with multiple players: ")
 	fmt.Println(APIResponsePlayers)
+
+	fmt.Println("APIResponsePlayers.Objects: ")
+	fmt.Println(APIResponsePlayers.Objects)
+	fmt.Println("APIResponsePlayers.Objects[0]: ")
+	fmt.Println(APIResponsePlayers.Objects[0])
+
+	// Store each player in the database
+	for _, player := range APIResponsePlayers.Objects {
+		response, err := helpers.PostRequest(helpers.ServerURL("player", serverPort), player)
+		if err != nil {
+			fmt.Println("Error storing player:", err)
+
+		}
+		fmt.Println("Response from storing player: ", response)
+	}
 }
 
 type APIResponsePlayers struct {

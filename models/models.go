@@ -7,17 +7,17 @@ import "time"
 type Player struct {
 	ID        uint      `json:"id" gorm:"primary_key"`
 	Name      string    `json:"tag" gorm:"type:varchar(15)"`
-	Rating    Rating    `json:"current_rating"`
+	Rating    Rating    `json:"current_rating" gorm:"embedded;embeddedPrefix:rating_"`
 	CreatedAt time.Time `json:"created_at" gorm:"type:datetime"`
 	UpdatedAt time.Time `json:"updated_at" gorm:"type:datetime"`
 }
 
 // Rating struct to capture nested JSON data
 type Rating struct {
-	Rating    float32 `json:"rating" gorm:"type:float"`
-	VsProtoss float32 `json:"tot_vp" gorm:"type:float"`
-	VsTerran  float32 `json:"tot_vt" gorm:"type:float"`
-	VsZerg    float32 `json:"tot_vz" gorm:"type:float"`
+	CurrentRating float32 `json:"rating" gorm:"column:rating_rating"`
+	VsProtoss     float32 `json:"tot_vp" gorm:"column:rating_vs_protoss"`
+	VsTerran      float32 `json:"tot_vt" gorm:"column:rating_vs_terran"`
+	VsZerg        float32 `json:"tot_vz" gorm:"column:rating_vs_zerg"`
 }
 
 // Map struct

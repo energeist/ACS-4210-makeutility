@@ -26,14 +26,14 @@ func main() {
 	ginPort := helpers.LoadFromDotEnv("GIN_PORT")
 	fmt.Println("Server Port: ", ginPort)
 
-	// initialize GORM and connect to SQLite database withs test.db file
-	database, err := gorm.Open(sqlite.Open("test.db"), &gorm.Config{})
+	// initialize GORM and connect to SQLite database withs tournament.db file
+	database, err := gorm.Open(sqlite.Open("tournament.db"), &gorm.Config{})
 
 	if err != nil {
 		panic("failed to connect database")
 	}
 
-	// Migrate the schema, create Test table with fields if it doesn't exist
+	// Migrate the schema, create tables if they do not exist
 	database.AutoMigrate(&models.Player{}, &models.GameMap{})
 
 	// Seed database with maps if required
