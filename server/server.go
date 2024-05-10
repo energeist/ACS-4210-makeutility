@@ -51,7 +51,6 @@ func main() {
 	} else {
 		fmt.Println("Top " + strconv.Itoa(topXPlayers) + " players already seeded")
 	}
-	// helpers.SeedTopPlayers(serverPort, APIKey, topXPlayers)
 
 	handler := db.NewHandler(database)
 
