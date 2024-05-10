@@ -10,7 +10,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// TestLoadFromDotEnv tests the LoadFromDotEnv function
 func TestLoadFromDotEnv(t *testing.T) {
 	// Setup the .env file for testing
 	os.WriteFile("../.env", []byte("TEST_KEY=success"), 0644)
@@ -33,7 +32,6 @@ func TestLoadFromDotEnv(t *testing.T) {
 	}
 }
 
-// TestAligulacURL tests the AligulacURL function
 func TestAligulacURL(t *testing.T) {
 	tests := []struct {
 		name     string
@@ -53,7 +51,6 @@ func TestAligulacURL(t *testing.T) {
 	}
 }
 
-// TestServerURL tests the ServerURL function
 func TestServerURL(t *testing.T) {
 	tests := []struct {
 		name       string
@@ -61,7 +58,7 @@ func TestServerURL(t *testing.T) {
 		serverPort string
 		expected   string
 	}{
-		{"Default port", "api/data", "8080", "http://localhost:8080/api/data"},
+		{"Default port", "data", "8080", "http://localhost:8080/api/v1/data"},
 	}
 
 	for _, tt := range tests {
@@ -72,7 +69,6 @@ func TestServerURL(t *testing.T) {
 	}
 }
 
-// TestGetRequest tests the GetRequest function
 func TestGetRequest(t *testing.T) {
 	tests := []struct {
 		name         string
@@ -95,10 +91,8 @@ func TestGetRequest(t *testing.T) {
 			}))
 			defer server.Close()
 
-			// Call the function under test
 			body, err := GetRequest(server.URL)
 
-			// Assert expectations
 			if tt.expectError {
 				assert.Error(t, err)
 			} else {
@@ -134,10 +128,8 @@ func TestPostRequest(t *testing.T) {
 			}))
 			defer server.Close()
 
-			// Call the function under test
 			resp, err := PostRequest(server.URL, tt.requestBody)
 
-			// Assert expectations
 			if tt.expectError {
 				assert.Error(t, err)
 			} else {

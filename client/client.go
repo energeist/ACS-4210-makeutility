@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"math/rand"
 	"net/http"
 
 	"github.com/energeist/tournament-calculator/helpers"
@@ -49,20 +48,7 @@ func main() {
 		return
 	}
 
-	// select 2 random players from the list
-	player1Index := rand.Intn(len(players) - 1)
-
-	// ensure that two unique players are selected
-	var player2Index int
-	for {
-		player2Index = rand.Intn(len(players) - 1)
-		if player2Index != player1Index {
-			break
-		}
-	}
-
-	player1 := players[player1Index]
-	player2 := players[player2Index]
+	player1, player2 := utils.SelectTwoRandomPlayers(players, maps)
 
 	fmt.Printf("Initializing match between %s (%s) and %s (%s)\n", player1.Tag, player1.Race, player2.Tag, player2.Race)
 
@@ -73,6 +59,7 @@ func main() {
 	}
 
 	var lastMatch *http.Response
+
 	lastMatch, err = helpers.PostRequest(helpers.ServerURL("match", serverPort), match)
 	if err != nil {
 		fmt.Println("Error storing match:", err)
@@ -81,22 +68,23 @@ func main() {
 	bodyBytes, _ := io.ReadAll(lastMatch.Body)
 
 	var matchResponse models.Match
+
 	err = json.Unmarshal(bodyBytes, &matchResponse)
 	if err != nil {
 		fmt.Println("Error unmarshalling matchResponse:", err)
 	}
 
-	fmt.Printf("Match between %s and %s stored in db\n", players[player1Index].Tag, players[player2Index].Tag)
+	fmt.Printf("Match between %s and %s stored in db\n", player1.Tag, player2.Tag)
 
 	fmt.Println("Calculating outcome of match...")
-	winner, predictedChance := utils.SimulateWithMapBalance(players[player1Index], players[player2Index], maps, numIterations)
+	winner, predictedChance := utils.SimulateWithMapBalance(player1, player2, maps, numIterations)
 	// query db for the last match entered
 
 	var loser models.Player
-	if winner == players[player1Index] {
-		loser = players[player2Index]
+	if winner == player1 {
+		loser = player2
 	} else {
-		loser = players[player1Index]
+		loser = player1
 	}
 
 	// store Result in db

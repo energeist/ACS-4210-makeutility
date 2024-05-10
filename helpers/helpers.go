@@ -48,6 +48,10 @@ func GetRequest(url string) ([]byte, error) {
 		return nil, err
 	}
 
+	if resp.StatusCode >= 300 {
+		return nil, fmt.Errorf("server returned error status: %d", resp.StatusCode)
+	}
+
 	return body, nil
 }
 
@@ -60,6 +64,10 @@ func PostRequest(url string, data interface{}) (*http.Response, error) {
 	resp, err := http.Post(url, "application/json", bytes.NewBuffer(dataJSON))
 	if err != nil {
 		return nil, err
+	}
+
+	if resp.StatusCode >= 300 { // or use any other appropriate criteria
+		return resp, fmt.Errorf("server returned error status: %d", resp.StatusCode)
 	}
 
 	return resp, nil
