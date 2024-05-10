@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/sqlite"
@@ -16,7 +16,8 @@ import (
 
 // Main function
 func main() {
-	fmt.Println("Hello, World!")
+	serverPort := helpers.LoadFromDotEnv("GIN_PORT")
+	APIKey := helpers.LoadFromDotEnv("ALIGULAC_API_KEY")
 
 	ginPort := helpers.LoadFromDotEnv("GIN_PORT")
 	fmt.Println("Server Port: ", ginPort)
@@ -40,17 +41,22 @@ func main() {
 		fmt.Println("Maps already seeded")
 	}
 
+	// Seed database with players if required
+	// Get top X players from Aligulac API
+	topXPlayers := 50
+
+	database.Model(&models.Player{}).Count(&count)
+	if count < int64(topXPlayers) {
+		helpers.SeedTopPlayers(database, serverPort, APIKey, topXPlayers)
+	} else {
+		fmt.Println("Top " + strconv.Itoa(topXPlayers) + " players already seeded")
+	}
+	// helpers.SeedTopPlayers(serverPort, APIKey, topXPlayers)
+
 	handler := db.NewHandler(database)
 
 	r := gin.New()
 
 	routes.SetupRoutes(r, handler)
 	r.Run(":" + ginPort) // listen and serve on port specified in .env file
-}
-
-// Define a ping route for testing
-func pingHandler(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{
-		"message": "pong",
-	})
 }

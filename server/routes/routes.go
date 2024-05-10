@@ -8,11 +8,14 @@ import (
 )
 
 func SetupRoutes(r *gin.Engine, handler *db.Handler) {
+	pingHandlers := &handlers.PingHandler{Handler: handler}
 	playerHandler := &handlers.PlayerHandler{Handler: handler}
 	mapHandler := &handlers.MapHandler{Handler: handler}
 	matchHandler := &handlers.MatchHandler{Handler: handler}
 	resultHandler := &handlers.ResultHandler{Handler: handler}
 
+	// Ping route
+	r.GET("/ping", pingHandlers.PingHandler)
 	// Player routes
 	r.GET("/player", playerHandler.ListPlayers)
 	r.GET("/player/:id", playerHandler.ListPlayers)

@@ -6,7 +6,6 @@ import (
 	"io"
 	"math/rand"
 	"net/http"
-	"strconv"
 
 	"github.com/energeist/tournament-calculator/helpers"
 	"github.com/energeist/tournament-calculator/models"
@@ -16,12 +15,7 @@ import (
 
 func main() {
 	serverPort := helpers.LoadFromDotEnv("GIN_PORT")
-	APIKey := helpers.LoadFromDotEnv("ALIGULAC_API_KEY")
-
-	// Get top X players from Aligulac API
-	topXPlayers := 50
-
-	seedTopPlayers(serverPort, APIKey, topXPlayers)
+	// APIKey := helpers.LoadFromDotEnv("ALIGULAC_API_KEY")
 
 	fmt.Println("Gathering players from database")
 
@@ -117,53 +111,6 @@ func main() {
 	}
 
 	fmt.Printf("\nResult stored in db: %.5f%% predicted win for %s\n", predictedChance, winner.Tag)
-}
-
-type APIResponsePlayers struct {
-	Objects []models.Player `json:"objects"`
-}
-
-func seedTopPlayers(serverPort, APIKey string, topXPlayers int) {
-	existingPlayersData, err := helpers.GetRequest(helpers.ServerURL("player", serverPort))
-	if err != nil {
-		fmt.Println("Error: ", err)
-		return
-	}
-
-	var existingPlayers []models.Player
-	if err := json.Unmarshal(existingPlayersData, &existingPlayers); err != nil {
-		fmt.Println("Error: ", err)
-		return
-	}
-
-	if len(existingPlayers) < topXPlayers {
-		fmt.Println("Seeding top " + strconv.Itoa(topXPlayers) + " players")
-		fmt.Println("Calling Aligulac API")
-
-		url := "http://aligulac.com/api/v1/player/?current_rating__isnull=false&order_by=-current_rating__rating&limit=" + strconv.Itoa(topXPlayers) + "&apikey=" + APIKey
-
-		multiplePlayersData, err := helpers.GetRequest(url)
-		if err != nil {
-			fmt.Println("Error: ", err)
-			return
-		}
-
-		var APIResponsePlayers APIResponsePlayers
-		if err := json.Unmarshal(multiplePlayersData, &APIResponsePlayers); err != nil {
-			fmt.Println("Error: ", err)
-			return
-		}
-
-		// Store each player in the database
-		for _, player := range APIResponsePlayers.Objects {
-			_, err := helpers.PostRequest(helpers.ServerURL("player", serverPort), player)
-			if err != nil {
-				fmt.Println("Error storing player:", err)
-			}
-		}
-	} else {
-		fmt.Println("Top " + strconv.Itoa(topXPlayers) + " players already seeded")
-	}
 }
 
 func calculateOutcome(player1, player2 models.Player, maps []models.GameMap) (winner models.Player, resultProbability float32) {

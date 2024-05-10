@@ -8,10 +8,16 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"strconv"
 
+	"github.com/energeist/tournament-calculator/models"
 	"github.com/joho/godotenv"
 	"gorm.io/gorm"
 )
+
+type APIResponsePlayers struct {
+	Objects []models.Player `json:"objects"`
+}
 
 // Load environment variables from .env file
 func LoadFromDotEnv(key string) string {
@@ -69,4 +75,53 @@ func GenerateDBSeed(db *gorm.DB) {
 			fmt.Println("Error creating map: ", result.Error)
 		}
 	}
+}
+
+func SeedTopPlayers(db *gorm.DB, serverPort, APIKey string, topXPlayers int) {
+	// existingPlayersData, err := GetRequest(ServerURL("player", serverPort))
+	// if err != nil {
+	// 	fmt.Println("Error: ", err)
+	// 	return
+	// }
+
+	// var existingPlayers []models.Player
+	// if err := json.Unmarshal(existingPlayersData, &existingPlayers); err != nil {
+	// 	fmt.Println("Error: ", err)
+	// 	return
+	// }
+
+	// if len(existingPlayers) < topXPlayers {
+	// 	fmt.Println("Seeding top " + strconv.Itoa(topXPlayers) + " players")
+	fmt.Println("Calling Aligulac API")
+
+	url := "http://aligulac.com/api/v1/player/?current_rating__isnull=false&order_by=-current_rating__rating&limit=" + strconv.Itoa(topXPlayers) + "&apikey=" + APIKey
+
+	multiplePlayersData, err := GetRequest(url)
+	if err != nil {
+		fmt.Println("Error: ", err)
+		return
+	}
+
+	var APIResponsePlayers APIResponsePlayers
+	if err := json.Unmarshal(multiplePlayersData, &APIResponsePlayers); err != nil {
+		fmt.Println("Error: ", err)
+		return
+	}
+
+	// Store each player in the database
+	// for _, player := range APIResponsePlayers.Objects {
+	// 	_, err := PostRequest(ServerURL("player", serverPort), player)
+	// 	if err != nil {
+	// 		fmt.Println("Error storing player:", err)
+	// 	}
+	// }
+
+	for _, player := range APIResponsePlayers.Objects {
+		if result := db.Create(&player); result.Error != nil {
+			fmt.Println("Error creating player: ", result.Error)
+		}
+	}
+	// } else {
+	// 	fmt.Println("Top " + strconv.Itoa(topXPlayers) + " players already seeded")
+	// }
 }
