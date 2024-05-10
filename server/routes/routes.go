@@ -15,24 +15,24 @@ func SetupRoutes(r *gin.Engine, handler *db.Handler) {
 	resultHandler := &handlers.ResultHandler{Handler: handler}
 
 	// Ping route
-	r.GET("/ping", pingHandlers.PingHandler)
+	r.GET("api/v1/ping", pingHandlers.PingHandler)
 	// Player routes
-	r.GET("/player", playerHandler.ListPlayers)
-	r.GET("/player/:id", playerHandler.ListPlayers)
-	r.POST("/player", playerHandler.CreatePlayers)
+	r.GET("api/v1/player", playerHandler.ListPlayers)
+	r.GET("api/v1/player/:id", playerHandler.ListPlayers)
+	r.POST("api/v1/player", playerHandler.CreatePlayers)
 
 	// Map routes
-	r.GET("/gameMap", mapHandler.ListMaps)
-	r.GET("/gameMap/:id", mapHandler.ListMaps)
-	r.POST("/gameMap", mapHandler.CreateMaps)
+	r.GET("api/v1/gameMap", mapHandler.ListMaps)
+	r.GET("api/v1/gameMap/:id", mapHandler.ListMaps)
+	r.POST("api/v1/gameMap", mapHandler.CreateMaps)
 
 	// Match routes
-	r.GET("/match", matchHandler.ListMatches)
-	r.GET("/match/:id", matchHandler.ListMatches)
-	r.POST("/match", matchHandler.CreateMatches)
+	r.GET("api/v1/match", matchHandler.ListMatches)
+	r.GET("api/v1/match/:id", matchHandler.ListMatches)
+	r.POST("api/v1/match", matchHandler.CreateMatches)
 
 	// Result routes
-	r.GET("/result", resultHandler.ListResults)
-	r.GET("/result/:id", resultHandler.ListResults)
-	r.POST("/result", resultHandler.CreateResults)
+	r.GET("api/v1/result", resultHandler.ListResults)
+	r.GET("api/v1/result/:id", resultHandler.ListResults)
+	r.POST("api/v1/result", resultHandler.CreateResults)
 }

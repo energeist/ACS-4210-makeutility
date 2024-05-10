@@ -33,7 +33,7 @@ func AligulacURL(endpoint, APIKey string, id int) string {
 }
 
 func ServerURL(endpoint, serverPort string) string {
-	return "http://localhost:" + serverPort + "/" + endpoint
+	return "http://localhost:" + serverPort + "/api/v1/" + endpoint
 }
 
 func GetRequest(url string) ([]byte, error) {
