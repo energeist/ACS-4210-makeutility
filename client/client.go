@@ -12,6 +12,7 @@ import (
 )
 
 // const rating_factor = 1354
+const numIterations = 10000000
 
 func main() {
 	serverPort := helpers.LoadFromDotEnv("GIN_PORT")
@@ -87,7 +88,7 @@ func main() {
 	fmt.Printf("Match between %s and %s stored in db\n", players[player1Index].Tag, players[player2Index].Tag)
 
 	fmt.Println("Calculating outcome of match...")
-	winner, predictedChance := calculateOutcome(players[player1Index], players[player2Index], maps)
+	winner, predictedChance := calculateOutcome(players[player1Index], players[player2Index], maps, numIterations)
 	// query db for the last match entered
 
 	var loser models.Player
@@ -113,8 +114,7 @@ func main() {
 	fmt.Printf("\nResult stored in db: %.5f%% predicted win for %s\n", predictedChance, winner.Tag)
 }
 
-func calculateOutcome(player1, player2 models.Player, maps []models.GameMap) (winner models.Player, resultProbability float32) {
-	numIterations := 10000000
+func calculateOutcome(player1, player2 models.Player, maps []models.GameMap, numIterations int) (winner models.Player, resultProbability float32) {
 	player1Race := player1.Race
 	player2Race := player2.Race
 
@@ -126,7 +126,6 @@ func calculateOutcome(player1, player2 models.Player, maps []models.GameMap) (wi
 	var mapBalance float32
 	// var matchBalance string
 
-	// loop 1000 times
 	for i := 0; i < numIterations; i++ {
 		// pick a random map from the pool
 		randomMap := maps[rand.Intn(len(maps))]
@@ -153,8 +152,6 @@ func calculateOutcome(player1, player2 models.Player, maps []models.GameMap) (wi
 			mapBalance = 0.5
 		}
 
-		// fmt.Println("Map: ", randomMap.Name, "Balance: ", mapBalance)
-
 		// calculate win probability for player1
 		if rand.Float32() <= mapBalance {
 			outcomesMap[randomMap.Name]++
@@ -162,7 +159,7 @@ func calculateOutcome(player1, player2 models.Player, maps []models.GameMap) (wi
 		outcomesMap["total"]++
 	}
 
-	fmt.Println(outcomesMap)
+	// fmt.Println(outcomesMap)
 
 	// calculate win probability for player1
 
@@ -175,11 +172,11 @@ func calculateOutcome(player1, player2 models.Player, maps []models.GameMap) (wi
 	aggregateWinProbability := float32(player1Wins) / float32(outcomesMap["total"])
 
 	if aggregateWinProbability > 0.5 {
-		fmt.Printf("Aggregate win probability: %.5f\n", aggregateWinProbability)
+		// fmt.Printf("Aggregate win probability: %.5f\n", aggregateWinProbability)
 		resultProbability = aggregateWinProbability * 100
 		return player1, resultProbability
 	} else {
-		fmt.Printf("Aggregate win probability: %.5f\n", aggregateWinProbability)
+		// fmt.Printf("Aggregate win probability: %.5f\n", aggregateWinProbability)
 		resultProbability = (1 - aggregateWinProbability) * 100
 		return player2, resultProbability
 	}
