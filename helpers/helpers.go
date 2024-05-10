@@ -78,20 +78,6 @@ func GenerateDBSeed(db *gorm.DB) {
 }
 
 func SeedTopPlayers(db *gorm.DB, serverPort, APIKey string, topXPlayers int) {
-	// existingPlayersData, err := GetRequest(ServerURL("player", serverPort))
-	// if err != nil {
-	// 	fmt.Println("Error: ", err)
-	// 	return
-	// }
-
-	// var existingPlayers []models.Player
-	// if err := json.Unmarshal(existingPlayersData, &existingPlayers); err != nil {
-	// 	fmt.Println("Error: ", err)
-	// 	return
-	// }
-
-	// if len(existingPlayers) < topXPlayers {
-	// 	fmt.Println("Seeding top " + strconv.Itoa(topXPlayers) + " players")
 	fmt.Println("Calling Aligulac API")
 
 	url := "http://aligulac.com/api/v1/player/?current_rating__isnull=false&order_by=-current_rating__rating&limit=" + strconv.Itoa(topXPlayers) + "&apikey=" + APIKey
@@ -108,20 +94,9 @@ func SeedTopPlayers(db *gorm.DB, serverPort, APIKey string, topXPlayers int) {
 		return
 	}
 
-	// Store each player in the database
-	// for _, player := range APIResponsePlayers.Objects {
-	// 	_, err := PostRequest(ServerURL("player", serverPort), player)
-	// 	if err != nil {
-	// 		fmt.Println("Error storing player:", err)
-	// 	}
-	// }
-
 	for _, player := range APIResponsePlayers.Objects {
 		if result := db.Create(&player); result.Error != nil {
 			fmt.Println("Error creating player: ", result.Error)
 		}
 	}
-	// } else {
-	// 	fmt.Println("Top " + strconv.Itoa(topXPlayers) + " players already seeded")
-	// }
 }
