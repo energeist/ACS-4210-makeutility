@@ -23,7 +23,7 @@ func main() {
 	fmt.Println("Server Port: ", ginPort)
 
 	// initialize GORM and connect to SQLite database withs tournament.db file
-	database, err := gorm.Open(sqlite.Open("tournament.db"), &gorm.Config{})
+	database, err := gorm.Open(sqlite.Open("./server/db/tournament.db"), &gorm.Config{})
 
 	if err != nil {
 		panic("failed to connect database")

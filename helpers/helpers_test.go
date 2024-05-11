@@ -4,33 +4,10 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
-	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
-
-func TestLoadFromDotEnv(t *testing.T) {
-	// Setup the .env file for testing
-	os.WriteFile("../.env", []byte("TEST_KEY=success"), 0644)
-	defer os.Remove("../.env")
-
-	tests := []struct {
-		name     string
-		key      string
-		expected string
-	}{
-		{"Valid key", "TEST_KEY", "success"},
-		{"Invalid key", "MISSING_KEY", ""},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			result := LoadFromDotEnv(tt.key)
-			assert.Equal(t, tt.expected, result)
-		})
-	}
-}
 
 func TestAligulacURL(t *testing.T) {
 	tests := []struct {

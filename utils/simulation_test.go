@@ -14,8 +14,8 @@ func BenchmarkSimulateWithMapBalance(b *testing.B) {
 	numIterations := 1
 
 	// Create mock players
-	player1 := models.Player{ID: 1, Tag: "Player1", Race: "P"}
-	player2 := models.Player{ID: 2, Tag: "Player2", Race: "T"}
+	player1 := models.Player{Tag: "Player1", Race: "P"}
+	player2 := models.Player{Tag: "Player2", Race: "T"}
 
 	// Create mock game maps
 	maps := []models.GameMap{

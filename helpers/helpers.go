@@ -8,6 +8,8 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"path/filepath"
+	"runtime"
 	"strconv"
 
 	"github.com/energeist/tournament-calculator/models"
@@ -21,8 +23,14 @@ type APIResponsePlayers struct {
 
 // Load environment variables from .env file
 func LoadFromDotEnv(key string) string {
-	if err := godotenv.Load("../.env"); err != nil {
-		fmt.Println("No .env file found")
+	_, b, _, _ := runtime.Caller(0)    // Get the path to the current file
+	basePath := filepath.Dir(b)        // Get the directory of the current file
+	rootPath := filepath.Dir(basePath) // Assume the root is one level up from the file
+
+	dotenvPath := filepath.Join(rootPath, ".env")
+	if err := godotenv.Load(dotenvPath); err != nil {
+		fmt.Println("No .env file found at", dotenvPath)
+		return ""
 	}
 
 	return os.Getenv(key)

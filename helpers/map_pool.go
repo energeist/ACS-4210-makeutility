@@ -1,8 +1,6 @@
 package helpers
 
 import (
-	"time"
-
 	"github.com/energeist/tournament-calculator/models"
 )
 
@@ -15,8 +13,6 @@ func MapPool() []models.GameMap {
 		TvZ:          51.5,
 		ZvP:          56.1,
 		PvT:          45.8,
-		CreatedAt:    time.Now(),
-		UpdatedAt:    time.Now(),
 	}
 
 	amphion := models.GameMap{
@@ -27,8 +23,6 @@ func MapPool() []models.GameMap {
 		TvZ:          54.5,
 		ZvP:          53.8,
 		PvT:          36.0,
-		CreatedAt:    time.Now(),
-		UpdatedAt:    time.Now(),
 	}
 
 	crimsonCourt := models.GameMap{
@@ -39,8 +33,6 @@ func MapPool() []models.GameMap {
 		TvZ:          69.2,
 		ZvP:          32.3,
 		PvT:          42.5,
-		CreatedAt:    time.Now(),
-		UpdatedAt:    time.Now(),
 	}
 
 	dynasty := models.GameMap{
@@ -51,8 +43,6 @@ func MapPool() []models.GameMap {
 		TvZ:          80.0,
 		ZvP:          39.3,
 		PvT:          52.1,
-		CreatedAt:    time.Now(),
-		UpdatedAt:    time.Now(),
 	}
 
 	ghostRiver := models.GameMap{
@@ -63,8 +53,6 @@ func MapPool() []models.GameMap {
 		TvZ:          53.8,
 		ZvP:          51.2,
 		PvT:          51.5,
-		CreatedAt:    time.Now(),
-		UpdatedAt:    time.Now(),
 	}
 
 	goldenaura := models.GameMap{
@@ -75,8 +63,6 @@ func MapPool() []models.GameMap {
 		TvZ:          49.5,
 		ZvP:          42.3,
 		PvT:          48.3,
-		CreatedAt:    time.Now(),
-		UpdatedAt:    time.Now(),
 	}
 
 	oceanborn := models.GameMap{
@@ -87,8 +73,6 @@ func MapPool() []models.GameMap {
 		TvZ:          54.1,
 		ZvP:          52.5,
 		PvT:          48.6,
-		CreatedAt:    time.Now(),
-		UpdatedAt:    time.Now(),
 	}
 
 	postYouth := models.GameMap{
@@ -99,8 +83,6 @@ func MapPool() []models.GameMap {
 		TvZ:          45.5,
 		ZvP:          40.0,
 		PvT:          30.6,
-		CreatedAt:    time.Now(),
-		UpdatedAt:    time.Now(),
 	}
 
 	siteDelta := models.GameMap{
@@ -111,8 +93,6 @@ func MapPool() []models.GameMap {
 		TvZ:          45.3,
 		ZvP:          50.8,
 		PvT:          50.3,
-		CreatedAt:    time.Now(),
-		UpdatedAt:    time.Now(),
 	}
 
 	gameMaps := []models.GameMap{alcyone, amphion, crimsonCourt, dynasty, ghostRiver, goldenaura, oceanborn, postYouth, siteDelta}
