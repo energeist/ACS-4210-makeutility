@@ -110,38 +110,38 @@ type Result struct {
 ## PROJECT DIRECTORY STRUCTURE
 
 ```
-/tournament-calculator
-  |- /client
-    |- client.go
-    |- client
-  |- /helpers
-    |- helpers.go
-    |- map_pool.go
-    |- helpers_test.go
-  |- /models
-    |- models.go
-  |- /server
-    |- /db
-      |- handler.go
-      |- tournament.db
-    |- /handlers
-      |- map_handlers.go
-      |- match_handlers.go
-      |- ping_handlers.go
-      |- player_handlers.go
-      |- result_handlers.go
-    |- /routes
-      |- routes.go
-    |- server.go
-    |- server
-  |- /utils
-    |- matchmaker.go
-    |- simulation.go
-    |- simulation_test.go
-|- .env
-|- .gitignore
-|- go.mod
-|- go.sum
-|- proposal.md
-|- README.md
-|- sample.env
+\tournament-calculator
+|--\client
+|----client.go
+|----client
+|--\helpers
+|----helpers.go
+|----map_pool.go
+|----helpers_test.go
+|--\models
+|----models.go
+|--\server
+|----\db
+|------handler.go
+|------tournament.db
+|----\handlers
+|------map_handlers.go
+|------match_handlers.go
+|------ping_handlers.go
+|------player_handlers.go
+|------result_handlers.go
+|----\routes
+|------routes.go
+|----server.go
+|----server
+|--\utils
+|----matchmaker.go
+|----simulation.go
+|----simulation_test.go
+|--.env
+|--.gitignore
+|--go.mod
+|--go.sum
+|--proposal.md
+|--README.md
+|--sample.env
