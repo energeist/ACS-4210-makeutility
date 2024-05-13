@@ -13,27 +13,29 @@ This repository includes both a server and a client (in this case, a driver scri
 - Clone this repository and `cd` into the root directory
 - `go build -o server ./server; go build -o client ./client;`
 - Ensure you have a `.env` file in your project root with format mirroring that of `sample.env`
-- - Server port can be anything that works for your system; `gin-gonic`'s standard port is `8080`.
-- - Generate an API key for Aligulac queries from [Aligulac's API docs](http://aligulac.com/about/api/) if you don't already have one
+  - Server port can be anything that works for your system; `gin-gonic`'s standard port is `8080`.
+  - Generate an API key for Aligulac queries from [Aligulac's API docs](http://aligulac.com/about/api/) if you don't already have one
 
 ### RUN
 
 You'll need two terminal tabs running, one for the server and the other for the client.  The server will create a `tournament.db` file and seed it with `GameMap` and `Player` data the first time that it's run.
 
 - After building the `server` and `client` executables, from the repository root run:
-- - `./server/server` to start the database server running in the background
-- - `./client/client` to perform a randomized match calculation using two players from Aligulac's top 50
-- - `go test -v -bench=. ./...` to run all table and bench tests
+  - `./server/server` to start the database server running in the background
+  - `./client/client` to perform a randomized match calculation using two players from Aligulac's top 50
+  - `go test -v -bench=. ./...` to run all table and bench tests
 
 ## API ROUTES
+
+The URL root for the server will be `localhost:PORT` where `PORT` is specified in your `.env` file.  The default port for Gin is `8080`.
 
 ### PING - `/api/v1/ping/`
 - `GET` `/ping` - returns a `pong` message to ensure that the server responding
 
 ### PLAYERS - `/api/v1/player/`
-  -`GET` `/api/v1/player` - retrieves a list of all `player`s
-  -`GET` `/api/v1/player/:id` - retrieves a specific `player` by id
-  -`POST` `/api/v1/player` - creates a `player` object according to the shape of the `Player` struct, which has a `Rating` struct nested inside:
+- `GET` `/api/v1/player` - retrieves a list of all `player`s
+- `GET` `/api/v1/player/:id` - retrieves a specific `player` by id
+- `POST` `/api/v1/player` - creates a `player` object according to the shape of the `Player` struct, which has a `Rating` struct nested inside:
 
 ```
 type Player struct {
@@ -58,9 +60,9 @@ type Base struct {
 ```
 
 ### MAPS - `/api/v1/gameMap/`
-  -`GET` `/api/v1/gameMap` - retrieves a list of all `gameMap`s
-  -`GET` `/api/v1/gameMap/:id` - retrieves a specific `gameMap` by id
-  -`POST` `/api/v1/gameMap` - creates a `gameMap` object according to the shape of the `GameMap` struct:
+- `GET` `/api/v1/gameMap` - retrieves a list of all `gameMap`s
+- `GET` `/api/v1/gameMap/:id` - retrieves a specific `gameMap` by id
+- `POST` `/api/v1/gameMap` - creates a `gameMap` object according to the shape of the `GameMap` struct:
 
 ```
 type GameMap struct {
@@ -76,9 +78,9 @@ type GameMap struct {
 ```
 
 ### MATCHES - `/api/v1/match/`
-  -`GET` `/api/v1/match` - retrieves a list of all `match`s
-  -`GET` `/api/v1/match/:id` - retrieves a specific `match` by id
-  -`POST` `/api/v1/match` - creates a `match` object according to the shape of the `Match` struct:
+- `GET` `/api/v1/match` - retrieves a list of all `match`s
+- `GET` `/api/v1/match/:id` - retrieves a specific `match` by id
+- `POST` `/api/v1/match` - creates a `match` object according to the shape of the `Match` struct:
 
 ```
 type Match struct {
@@ -91,9 +93,9 @@ type Match struct {
 ```
 
 ### RESULTS - `/api/v1/result/`
-  -`GET` `/api/v1/result` - retrieves a list of all `result`s
-  -`GET` `/api/v1/result/:id` - retrieves a specific `result` by id
-  -`POST` `/api/v1/result` - creates a `result` object according to the shape of the `Result` struct:
+- `GET` `/api/v1/result` - retrieves a list of all `result`s
+- `GET` `/api/v1/result/:id` - retrieves a specific `result` by id
+- `POST` `/api/v1/result` - creates a `result` object according to the shape of the `Result` struct:
 
 ```
 type Result struct {
